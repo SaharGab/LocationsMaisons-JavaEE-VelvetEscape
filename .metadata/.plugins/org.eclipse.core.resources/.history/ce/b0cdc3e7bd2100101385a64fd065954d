@@ -1,0 +1,81 @@
+package dao;
+
+import model.Bien;
+import util.connexion_db;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BienDAO {
+
+    public static boolean ajouterBien(Bien bien) {
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO bien (type, description, prix_par_jour, disponibilite, images) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, bien.getType());
+            ps.setString(2, bien.getDescription());
+            ps.setDouble(3, bien.getPrixParJour());
+            ps.setString(4, bien.getDisponibilite());
+            ps.setString(5, bien.getImages());
+            ps.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static List<Bien> getAllBiens() {
+        List<Bien> biens = new ArrayList<>();
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM bien";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Bien bien = new Bien();
+                bien.setId(rs.getInt("ID_bien"));
+                bien.setType(rs.getString("type"));
+                bien.setDescription(rs.getString("description"));
+                bien.setPrixParJour(rs.getDouble("prix_par_jour"));
+                bien.setDisponibilite(rs.getString("disponibilite"));
+                bien.setImages(rs.getString("images"));
+                biens.add(bien);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return biens;
+    }
+    public static List<Bien> getBiensByAgent(int agentId) {
+        List<Bien> biens = new ArrayList<>();
+        String sql = "SELECT * FROM biens WHERE agent_id = ?";
+
+        try (Connection con = connexion_db.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, agentId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Bien b = new Bien();
+                b.setId(rs.getInt("id"));
+                b.setType(rs.getString("type"));
+                b.setPrixParJour(rs.getDouble("prix_par_jour"));
+                b.setDescription(rs.getString("description"));
+                b.setDisponibilite(rs.getString("disponibilite"));
+                b.setImage(rs.getString("image"));
+                b.setAgentId(rs.getInt("agent_id"));
+                biens.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return biens;
+    }
+
+}

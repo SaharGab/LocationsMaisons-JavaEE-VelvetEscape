@@ -1,0 +1,29 @@
+package dao;
+
+import model.Utilisateur;
+import util.connexion_db;
+
+import java.sql.*;
+
+public class UtilisateurDAO {
+
+    public Utilisateur login(String username, String password) {
+        Utilisateur user = null;
+        try (Connection conn = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM users WHERE username=? AND password=?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                user = new Utilisateur();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setRole(rs.getString("role"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+}

@@ -1,0 +1,19 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/BienServlet")
+public class BienServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        List<Bien> biens = BienDAO.getAllBiens();
+        request.setAttribute("biens", biens);
+        request.getRequestDispatcher("pages/home.jsp").forward(request, response);
+    }
+}

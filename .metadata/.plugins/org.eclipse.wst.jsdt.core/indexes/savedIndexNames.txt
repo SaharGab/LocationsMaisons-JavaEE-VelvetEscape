@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+C:\Users\User\Desktop\Location_projet\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+7543550.index
+733947188.index
+2460527138.index
+2313086405.index
+248585808.index
+3678724755.index

@@ -1,0 +1,124 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.security.MessageDigest;
+
+import model.Utilisateur;
+import util.connexion_db;
+
+public class UtilisateurDAO {
+
+    // Récupérer un utilisateur par email et mot de passe haché
+    public static Utilisateur getUtilisateur(String email, String rawPassword) {
+        Utilisateur user = null;
+        Connection conn = connexion_db.getConnection();
+
+        try {
+            String hashedPassword = hashPassword(rawPassword);
+
+            PreparedStatement ps = conn.prepareStatement(
+                "SELECT * FROM utilisateur WHERE email = ? AND mot_de_passe = ?"
+            );
+            ps.setString(1, email);
+            ps.setString(2, hashedPassword);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                user = new Utilisateur();
+                user.setId(rs.getInt("ID_utilisateur"));
+                user.setUsername(rs.getString("nom")); // ou concat nom/prenom si tu préfères
+                user.setPassword(""); // Ne pas stocker le mot de passe dans l'objet retourné
+                user.setRole(rs.getString("typeUser"));
+            }
+
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    // Méthode utilitaire pour hacher un mot de passe
+    private static String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = md.digest(password.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashBytes) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Erreur de hash du mot de passe", e);
+        }
+    }
+    public static void updateUtilisateur(Utilisateur user) {
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "UPDATE utilisateur SET nom = ?, mot_de_passe = ? WHERE ID_utilisateur = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, user.getUsername()); // username = nom
+            ps.setString(2, hashPassword(user.getPassword()));
+            ps.setInt(3, user.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static List<Utilisateur> getAllAgents() {
+        List<Utilisateur> agents = new ArrayList<>();
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM utilisateur WHERE typeUser = 'agent'";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Utilisateur agent = new Utilisateur();
+                agent.setId(rs.getInt("ID_utilisateur"));
+                agent.setNom(rs.getString("nom"));
+               agent.setPrenom(rs.getString("prenom"));
+                agent.setEmail(rs.getString("email"));
+                agents.add(agent);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return agents;
+    }
+
+
+    public static void supprimerUtilisateur(int id) {
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "DELETE FROM utilisateur WHERE ID_utilisateur = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static boolean ajouterUtilisateur(Utilisateur user) {
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO utilisateur (nom, email, mot_de_passe, typeUser) VALUES (?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, user.getUsername()); // 'username' = champ 'nom'
+            ps.setString(2, user.getEmail());
+            ps.setString(3, hashPassword(user.getPassword()));
+            ps.setString(4, user.getRole()); // 'admin', 'agent' ou 'client'
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+}

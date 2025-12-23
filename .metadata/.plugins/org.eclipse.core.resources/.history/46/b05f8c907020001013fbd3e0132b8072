@@ -1,0 +1,31 @@
+package servlet;
+
+import dao.UtilisateurDAO;
+import model.Utilisateur;
+import java.io.IOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+@WebServlet("/AuthServlet")
+public class AuthServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+
+        Utilisateur user = UtilisateurDAO.getUtilisateur(username, password);
+        if (user != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            response.sendRedirect("pages/profil.jsp");
+        } else {
+            request.setAttribute("message", "Identifiants invalides !");
+            request.getRequestDispatcher("pages/login.jsp").forward(request, response);
+        }
+    }
+}

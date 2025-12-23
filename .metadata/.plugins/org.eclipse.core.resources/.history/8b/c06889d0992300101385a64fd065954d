@@ -1,0 +1,46 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="dao.BienDAO, model.Bien" %>
+<%@ page session="true" %>
+<%
+    String idBienStr = request.getParameter("id");
+    int idBien = Integer.parseInt(idBienStr);
+    Bien bien = BienDAO.getBienById(idBien);
+%>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détails Bien - Velvet Escape</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="${pageContext.request.contextPath}/images/<%= bien.getImages() %>" class="img-fluid rounded">
+        </div>
+        <div class="col-md-6">
+            <h2><%= bien.getType() %></h2>
+            <p class="lead"><%= bien.getDescription() %></p>
+            <p><strong><%= bien.getPrixParJour() %> TND / jour</strong></p>
+
+            <%
+                if (session.getAttribute("user") == null) {
+            %>
+                <a href="register.jsp" class="btn btn-primary">Inscrivez-vous pour Réserver</a>
+            <%
+                } else {
+            %>
+                <a href="reservation.jsp?id=<%= bien.getId() %>" class="btn btn-success">Réserver Maintenant</a>
+            <%
+                }
+            %>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

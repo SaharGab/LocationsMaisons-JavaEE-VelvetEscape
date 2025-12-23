@@ -1,0 +1,76 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - LocationMaisons</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/alert/dist/sweetalert.css">
+</head>
+<body>
+
+<input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
+
+<div class="main">
+
+    <!-- Sign in Form -->
+    <section class="sign-in">
+        <div class="container">
+            <div class="signin-content">
+                <div class="signin-image">
+                    <figure>
+                        <img src="${pageContext.request.contextPath}/images/signin.jpg" alt="connexion image">
+                    </figure>
+                    <a href="${pageContext.request.contextPath}/pages/register.jsp" class="signup-image-link">Créer un compte</a>
+                </div>
+                <div class="signin-form">
+                    <h2 class="form-title">Connexion</h2>
+                    <form method="post" action="${pageContext.request.contextPath}/AuthServlet" class="register-form" id="login-form">
+                        <div class="form-group">
+                            <label for="username"><i class="zmdi zmdi-email"></i></label>
+                            <input type="email" name="username" id="username" placeholder="Adresse email" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password"><i class="zmdi zmdi-lock"></i></label>
+                            <input type="password" name="password" id="password" placeholder="Mot de passe" required/>
+                        </div>
+                        <div class="form-group form-button">
+                            <input type="submit" class="form-submit" value="Se connecter"/>
+                        </div>
+                    </form>
+                    <div class="social-login">
+                        <span class="social-label">Ou connectez-vous avec</span>
+                        <ul class="socials">
+                            <li><a href="#"><i class="zmdi zmdi-facebook"></i></a></li>
+                            <li><a href="#"><i class="zmdi zmdi-twitter"></i></a></li>
+                            <li><a href="#"><i class="zmdi zmdi-google"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- JS -->
+<script src="${pageContext.request.contextPath}/vendor/jquery/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
+
+<!-- SweetAlert pour erreur -->
+<script type="text/javascript">
+    var status = document.getElementById("status").value;
+    if (status === "failed") {
+        swal("Erreur", "Email ou mot de passe incorrect", "error");
+    }
+</script>
+
+</body>
+</html>

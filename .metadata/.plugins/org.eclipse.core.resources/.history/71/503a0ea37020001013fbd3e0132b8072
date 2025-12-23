@@ -1,0 +1,74 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import model.Utilisateur;
+import util.connexion_db;
+
+public class UtilisateurDAO {
+
+    // Récupérer un utilisateur via login et mot de passe
+    public static Utilisateur getUtilisateur(String username, String password) {
+        Utilisateur user = null;
+        Connection conn = connexion_db.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM utilisateurs WHERE username = ? AND password = ?");
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                user = new Utilisateur();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    // Mettre à jour les infos utilisateur (username et password)
+    public static void updateUtilisateur(Utilisateur user) {
+        Connection conn = connexion_db.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement("UPDATE utilisateurs SET username = ?, password = ? WHERE id = ?");
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setInt(3, user.getId());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    // Facultatif : récupérer un utilisateur par ID
+    public static Utilisateur getUtilisateurById(int id) {
+        Utilisateur user = null;
+        Connection conn = connexion_db.getConnection();
+        try {
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM utilisateurs WHERE id = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                user = new Utilisateur();
+                user.setId(rs.getInt("id"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setRole(rs.getString("role"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+}

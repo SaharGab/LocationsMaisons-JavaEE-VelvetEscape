@@ -1,0 +1,52 @@
+package servlet;
+
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.*;
+import java.nio.file.Paths;
+import model.Utilisateur;
+import util.connexion_db;
+
+import java.sql.*;
+
+@MultipartConfig
+public class AjoutBienServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        Utilisateur agent = (Utilisateur) session.getAttribute("agent");
+        if (agent == null) {
+            response.sendRedirect("agent_login.jsp");
+            return;
+        }
+
+        String type = request.getParameter("type");
+        String description = request.getParameter("description");
+        double prix = Double.parseDouble(request.getParameter("prix_par_jour"));
+        boolean dispo = "1".equals(request.getParameter("disponibilite"));
+
+        Part filePart = request.getPart("image");
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String uploadPath = getServletContext().getRealPath("") + File.separator + "images";
+        filePart.write(uploadPath + File.separator + fileName);
+
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO bien (type, description, prix_par_jour, disponibilite, images, ID_utilisateur) VALUES (?, ?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, type);
+            ps.setString(2, description);
+            ps.setDouble(3, prix);
+            ps.setBoolean(4, dispo);
+            ps.setString(5, fileName);
+            ps.setInt(6, agent.getId());
+
+            ps.executeUpdate();
+            response.sendRedirect("pages/agent/dashboard_agent.jsp?status=success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendRedirect("pages/agent/dashboard_agent.jsp?status=error");
+        }
+    }
+}

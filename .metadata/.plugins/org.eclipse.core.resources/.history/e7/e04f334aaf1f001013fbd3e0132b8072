@@ -1,0 +1,39 @@
+package servlet;
+
+import util.connexion_db;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet("/RegisterServlet")
+public class RegisterServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO utilisateurs (username, password, role) VALUES (?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ps.setString(3, role);
+            ps.executeUpdate();
+
+            request.setAttribute("message", "Compte créé avec succès !");
+            request.getRequestDispatcher("pages/register.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("message", "Erreur lors de l'inscription.");
+            request.getRequestDispatcher("pages/register.jsp").forward(request, response);
+        }
+    }
+}

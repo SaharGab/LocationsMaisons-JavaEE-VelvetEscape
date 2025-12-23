@@ -1,0 +1,74 @@
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         version="6.0">
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+<servlet>
+    <servlet-name>AjoutAgentServlet</servlet-name>
+    <servlet-class>servlet.AjoutAgentServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>AjoutAgentServlet</servlet-name>
+    <url-pattern>/AjoutAgentServlet</url-pattern>
+</servlet-mapping>
+  <servlet>
+    <servlet-name>AdminDashboard</servlet-name>
+    <servlet-class>servlet.AdminDashboardServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>AdminDashboard</servlet-name>
+    <url-pattern>/AdminDashboardServlet</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>SupprimerAgent</servlet-name>
+    <servlet-class>servlet.SupprimerAgentServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>SupprimerAgent</servlet-name>
+    <url-pattern>/SupprimerAgentServlet</url-pattern>
+</servlet-mapping>
+<servlet>
+    <servlet-name>RegisterAdminServlet</servlet-name>
+    <servlet-class>servlet.RegisterAdminServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>RegisterAdminServlet</servlet-name>
+    <url-pattern>/RegisterAdminServlet</url-pattern>
+</servlet-mapping>
+
+<servlet>
+    <servlet-name>LoginAdminServlet</servlet-name>
+    <servlet-class>servlet.LoginAdminServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>LoginAdminServlet</servlet-name>
+    <url-pattern>/LoginAdminServlet</url-pattern>
+</servlet-mapping>
+<servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>servlet.LogoutServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/LogoutServlet</url-pattern>
+</servlet-mapping>
+<servlet>
+    <servlet-name>ModifierAgentServlet</servlet-name>
+    <servlet-class>servlet.ModifierAgentServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name>ModifierAgentServlet</servlet-name>
+    <url-pattern>/ModifierAgentServlet</url-pattern>
+</servlet-mapping>
+
+
+
+
+</web-app>

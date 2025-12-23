@@ -1,0 +1,198 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de Bord Administrateur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #343a40;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .table thead th {
+            background-color: #343a40;
+            color: #fff;
+        }
+        .btn i {
+            margin-right: 5px;
+        }
+        footer {
+            background-color: #343a40;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="${pageContext.request.contextPath}/index.jsp">Velvet Escape Admin</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                 <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServlet">Déconnexion</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container my-5">
+    <h2 class="section-title">Gestion des Agents</h2>
+
+    <!-- Form Card -->
+    <div class="card p-4 mb-4">
+        <form method="post" action="${pageContext.request.contextPath}/AjoutAgentServlet" class="row g-3">
+            <div class="col-md-3">
+                <input type="text" name="nom" class="form-control" placeholder="Nom" required>
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="prenom" class="form-control" placeholder="Prénom" required>
+            </div>
+            <div class="col-md-3">
+                <input type="email" name="email" class="form-control" placeholder="Adresse Email" required>
+            </div>
+            <div class="col-md-3">
+                <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+            </div>
+            <div class="col-md-12 text-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-user-plus"></i> Ajouter un agent
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card p-4">
+        <div class="table-responsive">
+            <table id="agentsTable" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+               <c:forEach var="agent" items="${agents}">
+    <tr>
+        <td>${agent.id}</td>
+        <td>${agent.nom}</td>
+        <td>${agent.prenom}</td>
+        <td>${agent.email}</td>
+        <td>
+            <a href="${pageContext.request.contextPath}/SupprimerAgentServlet?id=${agent.id}" class="btn btn-danger btn-sm mb-1">
+                <i class="fas fa-trash-alt"></i> Supprimer
+            </a>
+            <!-- Bouton Modifier -->
+            <button type="button"
+                    class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal-${agent.id}">
+                <i class="fas fa-edit"></i> Modifier
+            </button>
+        </td>
+    </tr>
+
+    <!-- MODALE DE MODIFICATION -->
+    <div class="modal fade" id="editModal-${agent.id}" tabindex="-1" aria-labelledby="editModalLabel-${agent.id}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" action="${pageContext.request.contextPath}/ModifierAgentServlet">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel-${agent.id}">Modifier Agent</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" value="${agent.id}" />
+                        <div class="mb-3">
+                            <label class="form-label">Nom</label>
+                            <input type="text" name="nom" class="form-control" value="${agent.nom}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prénom</label>
+                            <input type="text" name="prenom" class="form-control" value="${agent.prenom}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="${agent.email}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mot de passe (laisser vide si inchangé)</label>
+                            <input type="password" name="password" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="text-center py-4 mt-5">
+    <div class="container">
+        &copy; 2025 Velvet Escape - Tous droits réservés
+    </div>
+</footer>
+
+<!-- JS Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#agentsTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

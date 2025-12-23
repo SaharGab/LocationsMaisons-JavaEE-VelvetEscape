@@ -1,0 +1,65 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un compte</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/alert/dist/sweetalert.css">
+</head>
+<body class="bg-light">
+
+<input type="hidden" id="status" value="<%= request.getAttribute("status") %>">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 shadow p-4 bg-white rounded">
+            <h3 class="text-center mb-4">Créer un compte</h3>
+
+            <form method="post" action="${pageContext.request.contextPath}/RegisterServlet">
+                <div class="mb-3">
+                    <label for="nom" class="form-label">Nom</label>
+                    <input type="text" class="form-control" id="nom" name="nom" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="prenom" class="form-label">Prénom</label>
+                    <input type="text" class="form-control" id="prenom" name="prenom" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Adresse email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">S'inscrire</button>
+            </form>
+
+            <div class="text-center mt-3">
+                <p>Déjà inscrit ? <a href="${pageContext.request.contextPath}/pages/login.jsp">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script type="text/javascript">
+    var status = document.getElementById("status").value;
+    if (status === "success") {
+        swal("Félicitations", "Compte créé avec succès", "success");
+    } else if (status === "failed") {
+        swal("Erreur", "L'inscription a échoué. Veuillez réessayer.", "error");
+    }
+</script>
+
+</body>
+</html>

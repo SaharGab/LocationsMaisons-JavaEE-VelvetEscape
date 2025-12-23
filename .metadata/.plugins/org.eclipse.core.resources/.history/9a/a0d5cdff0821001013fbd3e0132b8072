@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de Bord Administrateur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Barre de navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Velvet Escape - Admin</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="#">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Paramètres</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Contenu principal -->
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="zmdi zmdi-view-dashboard"></i>
+                            Tableau de Bord
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="zmdi zmdi-accounts"></i>
+                            Utilisateurs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="zmdi zmdi-home"></i>
+                            Annonces
+                        </a>
+                    </li>
+                    <!-- Ajoutez d'autres liens selon vos besoins -->
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Zone de contenu -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <h2 class="mt-4">Bienvenue, Administrateur</h2>
+            <p>Utilisez le menu latéral pour naviguer dans les différentes sections du tableau de bord.</p>
+
+            <!-- Exemple de tableau -->
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Les données seront insérées ici dynamiquement -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Pied de page -->
+<footer class="footer mt-auto py-3 bg-dark text-white text-center">
+    <div class="container">
+        &copy; 2025 Velvet Escape - Tous droits réservés
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

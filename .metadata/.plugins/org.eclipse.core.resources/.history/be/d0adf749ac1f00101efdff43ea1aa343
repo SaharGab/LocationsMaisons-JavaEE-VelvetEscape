@@ -1,0 +1,22 @@
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         version="6.0">
+
+    <servlet>
+        <servlet-name>RegisterServlet</servlet-name>
+        <servlet-class>servlet.RegisterServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>RegisterServlet</servlet-name>
+        <url-pattern>/RegisterServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AuthServlet</servlet-name>
+        <servlet-class>servlet.AuthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AuthServlet</servlet-name>
+        <url-pattern>/AuthServlet</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,41 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/DashboardClientServlet")
+public class DashboardClientServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        System.out.println("=== DashboardClientServlet lancé ===");
+
+        List<Bien> biens = BienDAO.getAllBiens();
+        
+        System.out.println("Nombre de biens récupérés : " + biens.size());
+
+        for (Bien bien : biens) {
+            System.out.println("- Bien ID: " + bien.getId() + ", Type: " + bien.getType());
+            if (bien.getImagesBien() != null && !bien.getImagesBien().isEmpty()) {
+                System.out.println("  ➔ Première image: " + bien.getImagesBien().get(0).getChemin());
+            } else {
+                System.out.println("  ➔ Pas d'images pour ce bien.");
+            }
+        }
+
+        HttpSession session = request.getSession();
+        Object user = session.getAttribute("user");
+
+        if (user != null) {
+            request.setAttribute("biens", biens);
+            request.getRequestDispatcher("/pages/dashboard_client.jsp").forward(request, response);
+        } else {
+            response.sendRedirect(request.getContextPath() + "/pages/home.jsp");
+        }
+    }
+}

@@ -1,0 +1,70 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin - LocationMaisons</title>
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/alert/dist/sweetalert.css">
+</head>
+<body>
+
+<input type="hidden" id="status" value="<c:out value='${status}'/>">
+
+<div class="main">
+    <!-- Sign in Form -->
+    <section class="sign-in">
+        <div class="container">
+            <div class="signin-content">
+                <div class="signin-image">
+                    <figure>
+                        <img src="${pageContext.request.contextPath}/images/admin.jpg" alt="admin login image">
+                    </figure>
+                    <a href="admin_register.jsp" class="signup-image-link">Créer un compte admin</a>
+                </div>
+                <div class="signin-form">
+                    <h2 class="form-title">Connexion Admin</h2>
+<form method="post" action="${pageContext.request.contextPath}/LoginAdminServlet">
+                        <div class="form-group">
+                            <label for="username"><i class="zmdi zmdi-email"></i></label>
+                            <input type="email" name="username" id="username" placeholder="Adresse email" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="password"><i class="zmdi zmdi-lock"></i></label>
+                            <input type="password" name="password" id="password" placeholder="Mot de passe" required />
+                        </div>
+                        <div class="form-group form-button">
+                            <input type="submit" class="form-submit" value="Se connecter" />
+                        </div>
+                    </form>
+                    <c:if test="${not empty message}">
+                        <div class="alert alert-danger mt-3">${message}</div>
+                    </c:if>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- JS -->
+<script src="${pageContext.request.contextPath}/vendor/jquery/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="${pageContext.request.contextPath}/js/main.js"></script>
+
+<!-- SweetAlert pour erreur -->
+<script type="text/javascript">
+    var status = document.getElementById("status").value;
+    if (status === "failed") {
+        swal("Erreur", "Email ou mot de passe incorrect", "error");
+    }
+</script>
+
+</body>
+</html>

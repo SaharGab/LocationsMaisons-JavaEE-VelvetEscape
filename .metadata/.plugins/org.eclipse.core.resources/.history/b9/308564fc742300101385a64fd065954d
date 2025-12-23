@@ -1,0 +1,59 @@
+package servlet;
+
+import model.Utilisateur;
+import model.Bien;
+import util.connexion_db;
+import dao.BienDAO;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import java.io.*;
+import java.nio.file.Paths;
+
+@WebServlet("/AjoutBienServlet")
+@MultipartConfig
+public class AjoutBienServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        Utilisateur agent = (Utilisateur) session.getAttribute("user");
+
+        if (agent == null || !"agent".equals(agent.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/pages/agent/agent_login.jsp");
+            return;
+        }
+
+        String type = request.getParameter("type");
+        String description = request.getParameter("description");
+        double prix = Double.parseDouble(request.getParameter("prix_par_jour"));
+        String disponibilite = request.getParameter("disponibilite");
+
+        Part filePart = request.getPart("image");
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String uploadPath = getServletContext().getRealPath("") + File.separator + "images";
+        new File(uploadPath).mkdirs();
+        filePart.write(uploadPath + File.separator + fileName);
+
+        Bien bien = new Bien();
+        bien.setType(type);
+        bien.setDescription(description);
+        bien.setPrixParJour(prix);
+        bien.setDisponibilite(disponibilite);
+        bien.setImages(fileName);
+        bien.setIdUtilisateur(agent.getId());
+
+        // 🔥 Vérification du succès
+        boolean success = BienDAO.ajouterBien(bien);
+
+        if (success) {
+            response.sendRedirect(request.getContextPath() + "/ListeBiensServlet");
+        } else {
+            request.setAttribute("message", "Erreur lors de l'ajout du bien !");
+            request.getRequestDispatcher("/pages/agent/dashboard_agent.jsp").forward(request, response);
+        }
+    }
+}

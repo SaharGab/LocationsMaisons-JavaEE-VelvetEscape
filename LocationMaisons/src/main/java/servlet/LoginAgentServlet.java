@@ -1,0 +1,33 @@
+package servlet;
+
+import dao.UtilisateurDAO;
+import model.Utilisateur;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import java.io.IOException;
+
+@WebServlet("/LoginAgentServlet")
+public class LoginAgentServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        Utilisateur user = UtilisateurDAO.getUtilisateur(email, password);
+
+        if (user != null && "agent".equals(user.getRole())) {
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);  // ✅ maintenant correct
+
+            response.sendRedirect(request.getContextPath() + "/pages/agent/dashboard_agent.jsp"); // ➔ Redirection complète
+        } else {
+            request.setAttribute("message", "Identifiants invalides ou accès non autorisé.");
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/pages/agent/agent_login.jsp");
+            dispatcher.forward(request, response); // ➔ Forward correct
+        }
+    }
+}

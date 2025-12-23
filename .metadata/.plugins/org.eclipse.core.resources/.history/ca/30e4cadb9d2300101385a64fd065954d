@@ -1,0 +1,149 @@
+package dao;
+
+import model.Bien;
+import model.Imagebien;
+import util.connexion_db;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BienDAO {
+
+    // 🔵 Ajouter un bien et récupérer son ID généré
+    public static int ajouterBienEtRetournerId(Bien bien) {
+        int idBien = -1;
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO bien (type, description, prix_par_jour, disponibilite, ID_utilisateur) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, bien.getType());
+            ps.setString(2, bien.getDescription());
+            ps.setDouble(3, bien.getPrixParJour());
+            ps.setString(4, bien.getDisponibilite());
+            ps.setInt(5, bien.getIdUtilisateur());
+            ps.executeUpdate();
+
+            ResultSet rs = ps.getGeneratedKeys();
+            if (rs.next()) {
+                idBien = rs.getInt(1);
+            }
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return idBien;
+    }
+
+    // 🟠 Récupérer tous les biens
+    public static List<Bien> getAllBiens() {
+        List<Bien> biens = new ArrayList<>();
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM bien";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Bien bien = new Bien();
+                bien.setId(rs.getInt("ID_bien"));
+                bien.setType(rs.getString("type"));
+                bien.setDescription(rs.getString("description"));
+                bien.setPrixParJour(rs.getDouble("prix_par_jour"));
+                bien.setDisponibilite(rs.getString("disponibilite"));
+                bien.setIdUtilisateur(rs.getInt("ID_utilisateur"));
+                biens.add(bien);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return biens;
+    }
+
+    // 🟢 Récupérer les biens d'un agent spécifique
+    public static List<Bien> getBiensByAgent(int agentId) {
+        List<Bien> biens = new ArrayList<>();
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM bien WHERE ID_utilisateur = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, agentId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Bien bien = new Bien();
+                bien.setId(rs.getInt("ID_bien"));
+                bien.setType(rs.getString("type"));
+                bien.setDescription(rs.getString("description"));
+                bien.setPrixParJour(rs.getDouble("prix_par_jour"));
+                bien.setDisponibilite(rs.getString("disponibilite"));
+                bien.setIdUtilisateur(rs.getInt("ID_utilisateur"));
+                biens.add(bien);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return biens;
+    }
+
+    // 🔵 Récupérer un bien par son ID
+    public static Bien getBienById(int id) {
+        Bien bien = null;
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM bien WHERE ID_bien = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                bien = new Bien();
+                bien.setId(rs.getInt("ID_bien"));
+                bien.setType(rs.getString("type"));
+                bien.setDescription(rs.getString("description"));
+                bien.setPrixParJour(rs.getDouble("prix_par_jour"));
+                bien.setDisponibilite(rs.getString("disponibilite"));
+                bien.setIdUtilisateur(rs.getInt("ID_utilisateur"));
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bien;
+    }
+
+    // 📸 Ajouter une image pour un bien
+    public static void ajouterImagePourBien(int idBien, String cheminImage) {
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "INSERT INTO images_bien (ID_bien, chemin) VALUES (?, ?)";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idBien);
+            ps.setString(2, cheminImage);
+            ps.executeUpdate();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 📸 Récupérer toutes les images pour un bien
+    public static List<ImageBien> getImagesByBienId(int idBien) {
+        List<ImageBien> images = new ArrayList<>();
+        try (Connection con = connexion_db.getConnection()) {
+            String sql = "SELECT * FROM images_bien WHERE ID_bien = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idBien);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ImageBien image = new ImageBien();
+                image.setIdImage(rs.getInt("ID_image"));
+                image.setIdBien(rs.getInt("ID_bien"));
+                image.setChemin(rs.getString("chemin"));
+                images.add(image);
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return images;
+    }
+}

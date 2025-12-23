@@ -1,0 +1,36 @@
+package model;
+
+import java.util.List;
+
+public class Bien {
+    private int id;
+    private String type;
+    private String description;
+    private double prixParJour;
+    private String disponibilite;
+    private int idUtilisateur;  // ✅ l'ID de l'agent (utilisateur)
+
+    private List<Imagebien> imagesBien; // 🔥 Le bon type et bon nom
+
+    // Getters et Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public double getPrixParJour() { return prixParJour; }
+    public void setPrixParJour(double prixParJour) { this.prixParJour = prixParJour; }
+
+    public String getDisponibilite() { return disponibilite; }
+    public void setDisponibilite(String disponibilite) { this.disponibilite = disponibilite; }
+
+    public int getIdUtilisateur() { return idUtilisateur; }
+    public void setIdUtilisateur(int idUtilisateur) { this.idUtilisateur = idUtilisateur; }
+
+    public List<Imagebien> getImagesBien() { return imagesBien; }
+    public void setImagesBien(List<Imagebien> imagesBien) { this.imagesBien = imagesBien; }
+}

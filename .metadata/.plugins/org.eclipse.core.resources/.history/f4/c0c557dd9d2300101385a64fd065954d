@@ -1,0 +1,88 @@
+package servlet;
+
+import model.Utilisateur;
+import model.Bien;
+import util.connexion_db;
+import dao.BienDAO;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+
+import java.io.*;
+import java.nio.file.Paths;
+
+@WebServlet("/AjoutBienServlet")
+@MultipartConfig
+public class AjoutBienServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        System.out.println("===== DÉBUT AjoutBienServlet =====");
+
+        HttpSession session = request.getSession();
+        Utilisateur agent = (Utilisateur) session.getAttribute("user");
+
+        if (agent == null || !"agent".equals(agent.getRole())) {
+            System.out.println("🚫 Utilisateur non connecté ou non agent");
+            response.sendRedirect(request.getContextPath() + "/pages/agent/agent_login.jsp");
+            return;
+        }
+
+        System.out.println("✅ Agent connecté : " + agent.getPrenom() + " " + agent.getNom());
+
+        String type = request.getParameter("type");
+        String description = request.getParameter("description");
+        String strPrix = request.getParameter("prix_par_jour");
+        String disponibiliteStr = request.getParameter("disponibilite");
+
+        System.out.println("Type : " + type);
+        System.out.println("Prix : " + strPrix);
+        System.out.println("Description : " + description);
+        System.out.println("Disponibilité : " + disponibiliteStr);
+
+        double prix = 0;
+        try {
+            prix = Double.parseDouble(strPrix);
+        } catch (NumberFormatException e) {
+            System.out.println("🚫 Erreur parsing prix !");
+            e.printStackTrace();
+            request.setAttribute("message", "Erreur prix invalide !");
+            request.getRequestDispatcher("/pages/agent/dashboard_agent.jsp").forward(request, response);
+            return;
+        }
+
+        Part filePart = request.getPart("image");
+        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        System.out.println("Image reçue : " + fileName);
+
+        String uploadPath = getServletContext().getRealPath("") + File.separator + "images";
+        new File(uploadPath).mkdirs();
+        filePart.write(uploadPath + File.separator + fileName);
+
+        // 🔥 Correction ici
+        boolean dispo = "Disponible".equals(disponibiliteStr);
+
+        Bien bien = new Bien();
+        bien.setType(type);
+        bien.setDescription(description);
+        bien.setPrixParJour(prix);
+        bien.setDisponibilite(dispo ? "1" : "0");
+        bien.setImages(fileName);
+        bien.setIdUtilisateur(agent.getId());
+
+        boolean success = BienDAO.ajouterBien(bien);
+
+        if (success) {
+            System.out.println("✅ Bien ajouté avec succès !");
+            response.sendRedirect(request.getContextPath() + "/ListeBiensServlet");
+        } else {
+            System.out.println("🚫 Erreur lors de l'ajout du bien !");
+            request.setAttribute("message", "Erreur lors de l'ajout du bien !");
+            request.getRequestDispatcher("/pages/agent/dashboard_agent.jsp").forward(request, response);
+        }
+
+        System.out.println("===== FIN AjoutBienServlet =====");
+    }
+}

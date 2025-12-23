@@ -1,0 +1,43 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/DashboardClientServlet")
+public class DashboardClientServlet extends HttpServlet {
+	
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        System.out.println("=== DashboardClientServlet LANCÉ ===");
+        
+
+        List<Bien> biens = BienDAO.getAllBiens();
+
+        if (biens == null) {
+            System.out.println("==> Liste de biens = NULL");
+        } else {
+            System.out.println("==> Nombre de biens trouvés: " + biens.size());
+            for (Bien bien : biens) {
+                System.out.println("    Bien: ID=" + bien.getId() + ", Type=" + bien.getType());
+            }
+        }
+
+        HttpSession session = request.getSession();
+        Object user = session.getAttribute("user");
+
+        if (user != null) {
+            request.setAttribute("biens", biens);  // ⬅️ très important
+            System.out.println("➡️ Dispatch vers /pages/dashboard_client.jsp avec biens");
+            request.getRequestDispatcher("/pages/dashboard_client.jsp").forward(request, response);
+        } else {
+            System.out.println("🚫 Pas de user en session, redirect home.jsp");
+            response.sendRedirect(request.getContextPath() + "/pages/home.jsp");
+        }
+    }
+}

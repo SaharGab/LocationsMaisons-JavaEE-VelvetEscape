@@ -1,0 +1,38 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import model.Utilisateur;
+import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/DashboardClientServlet")
+public class DashboardClientServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Vérifier session
+        HttpSession session = request.getSession();
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect(request.getContextPath() + "/pages/home.jsp");
+            return;
+        }
+
+        // Charger les biens avec images
+        List<Bien> biens = BienDAO.getAllBiens();
+        for (Bien bien : biens) {
+            bien.setImagesBien(BienDAO.getImagesByBienId(bien.getId()));
+        }
+
+        // Passer les biens à la JSP
+        request.setAttribute("biens", biens);
+
+        // Aller vers dashboard_client.jsp
+        request.getRequestDispatcher("/pages/dashboard_client.jsp").forward(request, response);
+    }
+}

@@ -1,0 +1,149 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page session="true" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="model.Utilisateur" %>
+
+<%
+    Utilisateur user = (Utilisateur) session.getAttribute("user");
+    if (user == null) {
+        response.sendRedirect(request.getContextPath() + "/pages/home.jsp");
+        return;
+    }
+%>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Client - Velvet Escape</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+<a class="navbar-brand" href="${pageContext.request.contextPath}/DashboardClientServlet">Velvet Escape</a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav align-items-center">
+                <li class="nav-item me-3">
+                    <div class="avatar-circle" title="${user.prenom} ${user.nom}">
+                        ${fn:substring(user.prenom, 0, 1)}${fn:substring(user.nom, 0, 1)}
+                    </div>
+                </li>
+                <li class="nav-item me-3">
+                    <span class="text-white">${user.prenom} ${user.nom}</span>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/LogoutServletClient">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<header class="bg-light text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Bienvenue ${user.prenom} !</h1>
+        <p class="lead">Découvrez nos biens d'exception disponibles à la location.</p>
+    </div>
+</header>
+
+<!-- Biens Disponibles -->
+<section class="container my-5">
+    <h2 class="text-center mb-4">Nos Biens Disponibles</h2>
+    <div class="row">
+        <c:choose>
+            <c:when test="${empty biens}">
+                <div class="alert alert-warning text-center">
+                    Aucun bien disponible pour le moment !
+                </div>
+            </c:when>
+            <c:otherwise>
+            <!-- 🌟 Test afficher le nombre de biens disponibles -->
+<h5 class="text-center text-primary">
+    Nombre de biens trouvés : ${fn:length(biens)}
+</h5>
+                <c:forEach var="bien" items="${biens}">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100 card-hover">
+                            <c:if test="${not empty bien.imagesBien}">
+                                <img src="${pageContext.request.contextPath}/images/${bien.imagesBien[0].chemin}" class="card-img-top" alt="${bien.type}" style="object-fit: cover; height: 220px;">
+                            </c:if>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${bien.type}</h5>
+                                <p class="card-text flex-grow-1">
+                                    <c:choose>
+                                        <c:when test="${fn:length(bien.description) > 100}">
+                                            ${fn:substring(bien.description, 0, 100)}...
+                                        </c:when>
+                                        <c:otherwise>
+                                            ${bien.description}
+                                        </c:otherwise>
+                                    </c:choose>
+                                </p>
+                                <p><strong>${bien.prixParJour} TND / jour</strong></p>
+
+                                <c:choose>
+                                    <c:when test="${bien.disponibilite == 1}">
+                                        <p class="text-success"><strong>Disponible - Louer maintenant</strong></p>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <p class="text-danger"><strong>Non disponible pour le moment</strong></p>
+                                    </c:otherwise>
+                                </c:choose>
+
+                                <a href="${pageContext.request.contextPath}/pages/details.jsp?id=${bien.id}" class="btn btn-dark btn-block mt-3 stretched-link" style="text-decoration: none;">Voir Détails</a>
+                            </div>
+                        </div>
+                    </div>
+                </c:forEach>
+            </c:otherwise>
+        </c:choose>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-light text-center py-4 mt-5">
+    <div class="container">
+        &copy; 2025 Velvet Escape - Tous droits réservés
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+    }
+    .avatar-circle {
+        width: 40px;
+        height: 40px;
+        background-color: #6c757d;
+        color: white;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 18px;
+    }
+</style>
+
+</body>
+</html>

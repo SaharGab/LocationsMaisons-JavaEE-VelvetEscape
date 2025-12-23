@@ -1,0 +1,31 @@
+package servlet;
+
+import java.io.IOException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+public class LogoutServletAgent HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    // Gère les requêtes GET pour la déconnexion
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Récupère la session existante sans en créer une nouvelle
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            // Invalide la session pour déconnecter l'utilisateur
+            session.invalidate();
+        }
+        // Redirige vers la page de connexion
+        response.sendRedirect(request.getContextPath() + "/pages/agent/agent_login.jsp");
+    }
+
+    // Redirige les requêtes POST vers la méthode doGet
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doGet(request, response);
+    }
+}

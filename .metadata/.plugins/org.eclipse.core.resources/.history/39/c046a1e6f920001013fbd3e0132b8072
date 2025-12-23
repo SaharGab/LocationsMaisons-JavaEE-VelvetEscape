@@ -1,0 +1,75 @@
+<!-- admin-dashboard.jsp -->
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Gestion des Agents</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Admin Panel</a>
+        <div class="collapse navbar-collapse justify-content-end">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="LogoutServlet">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Gestion des Agents</h2>
+
+    <form method="post" action="AjoutAgentServlet" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="nom" class="form-control" placeholder="Nom de l'agent" required>
+        </div>
+        <div class="col-md-4">
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="col-md-4">
+            <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
+        </div>
+        <div class="col-md-12 text-end">
+            <button type="submit" class="btn btn-primary">Ajouter Agent</button>
+        </div>
+    </form>
+
+    <table id="agentsTable" class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach var="agent" items="${agents}">
+            <tr>
+                <td>${agent.id}</td>
+                <td>${agent.nom}</td>
+                <td>${agent.email}</td>
+                <td><a href="SupprimerAgentServlet?id=${agent.id}" class="btn btn-danger btn-sm">Supprimer</a></td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#agentsTable').DataTable();
+    });
+</script>
+
+</body>
+</html>

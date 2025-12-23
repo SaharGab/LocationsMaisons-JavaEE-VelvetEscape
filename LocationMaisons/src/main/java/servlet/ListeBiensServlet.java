@@ -1,0 +1,30 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import model.Utilisateur;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/ListeBiensServlet")
+public class ListeBiensServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        HttpSession session = request.getSession();
+        Utilisateur agent = (Utilisateur) session.getAttribute("user");
+
+        if (agent == null || !"agent".equals(agent.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/pages/agent/agent_login.jsp");
+            return;
+        }
+
+        List<Bien> biens = BienDAO.getBiensByAgent(agent.getId());
+        request.setAttribute("biens", biens);
+        request.getRequestDispatcher("/pages/agent/liste_biens.jsp").forward(request, response);
+    }
+}

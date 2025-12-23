@@ -1,0 +1,31 @@
+package servlet;
+
+import dao.BienDAO;
+import model.Bien;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/DashboardClientServlet")
+public class DashboardClientServlet extends HttpServlet {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Bien> biens = BienDAO.getAllBiens();
+
+        // 🌟 TEST : Afficher combien de biens sont récupérés
+        System.out.println("DEBUG: Nombre de biens récupérés depuis la base : " + biens.size());
+
+        for (Bien bien : biens) {
+            bien.setImagesBien(BienDAO.getImagesByBienId(bien.getId()));
+
+            // 🌟 TEST: Afficher pour chaque bien son ID, type et nombre d'images
+            System.out.println("Bien ID: " + bien.getId() + ", Type: " + bien.getType() + ", Nombre d'images: " + (bien.getImagesBien() != null ? bien.getImagesBien().size() : 0));
+        }
+
+        request.setAttribute("biens", biens);
+        request.getRequestDispatcher("/pages/dashboard_client.jsp").forward(request, response);
+    }
+}

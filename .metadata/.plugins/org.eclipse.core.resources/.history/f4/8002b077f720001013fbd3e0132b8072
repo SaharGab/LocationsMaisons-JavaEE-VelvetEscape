@@ -1,0 +1,54 @@
+package servlet;
+
+import java.io.IOException;
+import dao.UtilisateurDAO;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Utilisateur;
+
+public class ProfilServlet extends HttpServlet {
+    private static final long serialVersionUID = 1L;
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        request.setAttribute("user", user);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/profil.jsp");
+        dispatcher.forward(request, response);
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Utilisateur user = (Utilisateur) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        String newUsername = request.getParameter("username");
+        String newPassword = request.getParameter("password");
+
+        user.setUsername(newUsername);
+        user.setPassword(newPassword);
+
+        UtilisateurDAO.updateUtilisateur(user);
+
+        session.setAttribute("user", user);
+        request.setAttribute("message", "Profil mis à jour avec succès !");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/profil.jsp");
+        dispatcher.forward(request, response);
+    }
+}
